@@ -1,0 +1,226 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a snapshot classifier",
+        "description": "Classify the snapshot of a camera with an image model trained on Teachable Machine (teachablemachine.withgoogle.com). Export it as \"Tensorflow Lite\" → \"Floating point\" and upload the downloaded .zip.",
+        "data": {
+          "name": "Name",
+          "camera_entity_id": "Camera",
+          "model_file": "Teachable Machine model (.zip)"
+        },
+        "data_description": {
+          "name": "For example \"Parking spot\". Used as device name.",
+          "camera_entity_id": "The camera whose snapshot is analyzed.",
+          "model_file": "The converted_tflite.zip archive containing model_unquant.tflite and labels.txt."
+        }
+      },
+      "classes": {
+        "title": "Classes",
+        "description": "Classes found in the model: {classes}.\n\nBoth choices are optional.",
+        "data": {
+          "empty_class": "Class meaning \"empty\"",
+          "target_class": "Class to track (e.g. \"my car\")"
+        },
+        "data_description": {
+          "empty_class": "Creates an \"Occupied\" sensor that is on when this class has a probability below 50%.",
+          "target_class": "Creates a \"[class] present\" sensor that is on when this class has a probability of 50% or more."
+        }
+      }
+    },
+    "error": {
+      "invalid_archive": "The file is not a valid .zip archive.",
+      "missing_model": "No .tflite model found in the archive. Export from Teachable Machine with \"Tensorflow Lite\" → \"Floating point\".",
+      "missing_labels": "labels.txt not found in the archive.",
+      "invalid_labels": "labels.txt is empty, unreadable or contains duplicate classes.",
+      "invalid_model": "The .tflite file is not a valid TensorFlow Lite model.",
+      "unsupported_quantized": "This is a quantized model, which is not supported. In Teachable Machine export the model as \"Tensorflow Lite\" → \"Floating point\".",
+      "unsupported_model": "The model is not supported ({details}). Export it from Teachable Machine (Image project) as \"Tensorflow Lite\" → \"Floating point\".",
+      "label_mismatch": "The model has {outputs} outputs but labels.txt lists {labels} classes."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Snapshot classifier options",
+        "description": "Model classes: {classes}.",
+        "data": {
+          "threshold": "Confidence threshold",
+          "update_mode": "When to analyze",
+          "watch_attribute": "Camera attribute to watch",
+          "scan_interval": "Interval",
+          "empty_class": "Class meaning \"empty\"",
+          "target_class": "Class to track (e.g. \"my car\")",
+          "uncertain_snapshot_dir": "Folder for uncertain snapshots",
+          "model_file": "Replace the model (.zip)"
+        },
+        "data_description": {
+          "threshold": "Under this probability the result is \"Uncertain\".",
+          "update_mode": "Watching a camera attribute analyzes each new snapshot (e.g. the \"timestamp\" attribute of ring-mqtt cameras). Do not use entity_picture/access_token: it changes every few minutes even without a new image.",
+          "watch_attribute": "Used with \"When the camera attribute changes\". Default: timestamp.",
+          "scan_interval": "Used with \"At a fixed interval\". Unchanged images are not analyzed again.",
+          "empty_class": "Creates an \"Occupied\" sensor that is on when this class has a probability below 50%.",
+          "target_class": "Creates a \"[class] present\" sensor that is on when this class has a probability of 50% or more.",
+          "uncertain_snapshot_dir": "Optional, e.g. /media/snapshot_classifier/uncertain. Uncertain snapshots are saved here (full image) so you can add them to the training data. Must be an allowed folder (/media is allowed by default).",
+          "model_file": "Optional: upload a retrained Teachable Machine export. Entities are kept."
+        },
+        "sections": {
+          "crop": {
+            "name": "Crop",
+            "description": "Optional area of the image to analyze, in fractions of width/height (0-1), applied before the centre square crop. Use the same crop for the training pictures (service snapshot_classifier.export_crops).",
+            "data": {
+              "x": "X",
+              "y": "Y",
+              "width": "Width",
+              "height": "Height"
+            },
+            "data_description": {
+              "x": "Left edge, as a fraction of the image width (0 = left).",
+              "y": "Top edge, as a fraction of the image height (0 = top).",
+              "width": "Width as a fraction of the image width (1 = whole image).",
+              "height": "Height as a fraction of the image height (1 = whole image)."
+            }
+          }
+        }
+      },
+      "classes": {
+        "title": "Classes",
+        "description": "Classes found in the model: {classes}.\n\nBoth choices are optional.",
+        "data": {
+          "empty_class": "Class meaning \"empty\"",
+          "target_class": "Class to track (e.g. \"my car\")"
+        },
+        "data_description": {
+          "empty_class": "Creates an \"Occupied\" sensor that is on when this class has a probability below 50%.",
+          "target_class": "Creates a \"[class] present\" sensor that is on when this class has a probability of 50% or more."
+        }
+      }
+    },
+    "error": {
+      "invalid_archive": "The file is not a valid .zip archive.",
+      "missing_model": "No .tflite model found in the archive. Export from Teachable Machine with \"Tensorflow Lite\" → \"Floating point\".",
+      "missing_labels": "labels.txt not found in the archive.",
+      "invalid_labels": "labels.txt is empty, unreadable or contains duplicate classes.",
+      "invalid_model": "The .tflite file is not a valid TensorFlow Lite model.",
+      "unsupported_quantized": "This is a quantized model, which is not supported. In Teachable Machine export the model as \"Tensorflow Lite\" → \"Floating point\".",
+      "unsupported_model": "The model is not supported ({details}). Export it from Teachable Machine (Image project) as \"Tensorflow Lite\" → \"Floating point\".",
+      "label_mismatch": "The model has {outputs} outputs but labels.txt lists {labels} classes.",
+      "invalid_crop": "Invalid crop: width and height must be greater than 0 and the box must be inside the image (x + width ≤ 1, y + height ≤ 1).",
+      "path_not_allowed": "Use an absolute path inside an allowed folder (allowlist_external_dirs, /media is allowed by default)."
+    }
+  },
+  "selector": {
+    "update_mode": {
+      "options": {
+        "attribute": "When the camera attribute changes",
+        "interval": "At a fixed interval",
+        "manual": "Only manually (button or automation)"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "classification": {
+        "name": "Status",
+        "state": {
+          "uncertain": "Uncertain"
+        }
+      },
+      "confidence": {
+        "name": "Confidence"
+      }
+    },
+    "binary_sensor": {
+      "occupied": {
+        "name": "Occupied"
+      },
+      "class_present": {
+        "name": "{class_name} present",
+        "state": {
+          "on": "Detected",
+          "off": "Not detected"
+        }
+      }
+    },
+    "button": {
+      "analyze": {
+        "name": "Analyze now"
+      }
+    },
+    "event": {
+      "uncertain_result": {
+        "name": "Uncertain result",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "uncertain": "Uncertain"
+            }
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "export_crops": {
+      "name": "Export crops",
+      "description": "Crops every image of a folder into another folder with the same crop used by a classifier, to prepare the training pictures for Teachable Machine.",
+      "fields": {
+        "source": {
+          "name": "Source folder",
+          "description": "Folder with the original pictures, e.g. /media/parking."
+        },
+        "destination": {
+          "name": "Destination folder",
+          "description": "Folder where the cropped pictures are written (same file names)."
+        },
+        "config_entry_id": {
+          "name": "Classifier",
+          "description": "Use the crop configured for this classifier. The X/Y/width/height fields override it."
+        },
+        "x": {
+          "name": "X",
+          "description": "Left edge, as a fraction of the image width (0 = left)."
+        },
+        "y": {
+          "name": "Y",
+          "description": "Top edge, as a fraction of the image height (0 = top)."
+        },
+        "width": {
+          "name": "Width",
+          "description": "Width as a fraction of the image width (1 = whole image)."
+        },
+        "height": {
+          "name": "Height",
+          "description": "Height as a fraction of the image height (1 = whole image)."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Overwrite pictures that already exist in the destination folder."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "model_missing": {
+      "message": "The model files are missing ({path}). Upload the model again from the integration options or re-add the integration."
+    },
+    "model_invalid": {
+      "message": "The stored model cannot be loaded ({error})."
+    },
+    "invalid_config_entry": {
+      "message": "{entry_id} is not a Snapshot Classifier entry."
+    },
+    "invalid_crop": {
+      "message": "Invalid crop: width and height must be greater than 0 and the box must be inside the image (x + width ≤ 1, y + height ≤ 1)."
+    },
+    "path_not_allowed": {
+      "message": "{path} is not an allowed absolute path (see allowlist_external_dirs; /media is allowed by default)."
+    },
+    "source_not_found": {
+      "message": "The folder {path} does not exist."
+    },
+    "same_directory": {
+      "message": "Source and destination folders must be different."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "domain": "snapshot_classifier",
+  "name": "Snapshot Classifier",
+  "codeowners": ["@mauro-midolo"],
+  "config_flow": true,
+  "dependencies": ["camera", "file_upload"],
+  "documentation": "https://github.com/mauro-midolo/snapshot-classifier-home-assistant",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/mauro-midolo/snapshot-classifier-home-assistant/issues",
+  "requirements": ["tflite==2.18.0"],
+  "version": "0.1.0"
+}

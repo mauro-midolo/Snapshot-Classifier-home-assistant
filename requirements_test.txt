@@ -1,0 +1,8 @@
+# Test dependencies (not needed by Home Assistant at runtime)
+pytest-homeassistant-custom-component==0.13.316
+tflite==2.18.0
+# Reference runtime used only to check the numpy interpreter
+ai-edge-litert==2.3.0
+# Required by the camera integration in the test environment
+PyTurboJPEG==1.8.0
+ruff==0.17.3

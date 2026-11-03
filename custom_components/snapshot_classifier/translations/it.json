@@ -1,0 +1,226 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aggiungi un classificatore di snapshot",
+        "description": "Classifica lo snapshot di una telecamera con un modello di immagini addestrato su Teachable Machine (teachablemachine.withgoogle.com). Esportalo come \"Tensorflow Lite\" → \"Floating point\" e carica lo .zip scaricato.",
+        "data": {
+          "name": "Nome",
+          "camera_entity_id": "Telecamera",
+          "model_file": "Modello Teachable Machine (.zip)"
+        },
+        "data_description": {
+          "name": "Ad esempio \"Parcheggio\". Usato come nome del dispositivo.",
+          "camera_entity_id": "La telecamera di cui analizzare lo snapshot.",
+          "model_file": "L'archivio converted_tflite.zip che contiene model_unquant.tflite e labels.txt."
+        }
+      },
+      "classes": {
+        "title": "Classi",
+        "description": "Classi trovate nel modello: {classes}.\n\nEntrambe le scelte sono facoltative.",
+        "data": {
+          "empty_class": "Classe che significa \"vuoto\"",
+          "target_class": "Classe da seguire (es. \"la mia auto\")"
+        },
+        "data_description": {
+          "empty_class": "Crea un sensore \"Occupato\" che è acceso quando questa classe ha probabilità inferiore al 50%.",
+          "target_class": "Crea un sensore \"[classe] presente\" acceso quando questa classe ha probabilità del 50% o più."
+        }
+      }
+    },
+    "error": {
+      "invalid_archive": "Il file non è un archivio .zip valido.",
+      "missing_model": "Nessun modello .tflite nell'archivio. Esporta da Teachable Machine con \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
+      "missing_labels": "labels.txt non trovato nell'archivio.",
+      "invalid_labels": "labels.txt è vuoto, illeggibile o contiene classi duplicate.",
+      "invalid_model": "Il file .tflite non è un modello TensorFlow Lite valido.",
+      "unsupported_quantized": "È un modello quantizzato, non supportato. In Teachable Machine esporta il modello come \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
+      "unsupported_model": "Modello non supportato ({details}). Esportalo da Teachable Machine (progetto Immagine) come \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
+      "label_mismatch": "Il modello ha {outputs} uscite ma labels.txt elenca {labels} classi."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni del classificatore",
+        "description": "Classi del modello: {classes}.",
+        "data": {
+          "threshold": "Soglia di sicurezza",
+          "update_mode": "Quando analizzare",
+          "watch_attribute": "Attributo della telecamera da osservare",
+          "scan_interval": "Intervallo",
+          "empty_class": "Classe che significa \"vuoto\"",
+          "target_class": "Classe da seguire (es. \"la mia auto\")",
+          "uncertain_snapshot_dir": "Cartella per gli snapshot incerti",
+          "model_file": "Sostituisci il modello (.zip)"
+        },
+        "data_description": {
+          "threshold": "Sotto questa probabilità il risultato è \"Incerto\".",
+          "update_mode": "Osservare un attributo della telecamera analizza ogni nuovo snapshot (es. l'attributo \"timestamp\" delle telecamere ring-mqtt). Non usare entity_picture/access_token: cambia ogni pochi minuti anche senza una nuova immagine.",
+          "watch_attribute": "Usato con \"Quando cambia l'attributo della telecamera\". Predefinito: timestamp.",
+          "scan_interval": "Usato con \"A intervallo fisso\". Le immagini invariate non vengono rianalizzate.",
+          "empty_class": "Crea un sensore \"Occupato\" che è acceso quando questa classe ha probabilità inferiore al 50%.",
+          "target_class": "Crea un sensore \"[classe] presente\" acceso quando questa classe ha probabilità del 50% o più.",
+          "uncertain_snapshot_dir": "Facoltativa, es. /media/snapshot_classifier/incerti. Gli snapshot incerti vengono salvati qui (immagine intera) per aggiungerli alle foto di addestramento. Deve essere una cartella consentita (/media lo è di default).",
+          "model_file": "Facoltativo: carica una nuova esportazione di Teachable Machine riaddestrata. Le entità vengono mantenute."
+        },
+        "sections": {
+          "crop": {
+            "name": "Ritaglio",
+            "description": "Area facoltativa dell'immagine da analizzare, in frazioni di larghezza/altezza (0-1), applicata prima del quadrato centrale. Usa lo stesso ritaglio per le foto di addestramento (servizio snapshot_classifier.export_crops).",
+            "data": {
+              "x": "X",
+              "y": "Y",
+              "width": "Larghezza",
+              "height": "Altezza"
+            },
+            "data_description": {
+              "x": "Bordo sinistro, come frazione della larghezza (0 = sinistra).",
+              "y": "Bordo superiore, come frazione dell'altezza (0 = in alto).",
+              "width": "Larghezza come frazione della larghezza dell'immagine (1 = tutta).",
+              "height": "Altezza come frazione dell'altezza dell'immagine (1 = tutta)."
+            }
+          }
+        }
+      },
+      "classes": {
+        "title": "Classi",
+        "description": "Classi trovate nel modello: {classes}.\n\nEntrambe le scelte sono facoltative.",
+        "data": {
+          "empty_class": "Classe che significa \"vuoto\"",
+          "target_class": "Classe da seguire (es. \"la mia auto\")"
+        },
+        "data_description": {
+          "empty_class": "Crea un sensore \"Occupato\" che è acceso quando questa classe ha probabilità inferiore al 50%.",
+          "target_class": "Crea un sensore \"[classe] presente\" acceso quando questa classe ha probabilità del 50% o più."
+        }
+      }
+    },
+    "error": {
+      "invalid_archive": "Il file non è un archivio .zip valido.",
+      "missing_model": "Nessun modello .tflite nell'archivio. Esporta da Teachable Machine con \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
+      "missing_labels": "labels.txt non trovato nell'archivio.",
+      "invalid_labels": "labels.txt è vuoto, illeggibile o contiene classi duplicate.",
+      "invalid_model": "Il file .tflite non è un modello TensorFlow Lite valido.",
+      "unsupported_quantized": "È un modello quantizzato, non supportato. In Teachable Machine esporta il modello come \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
+      "unsupported_model": "Modello non supportato ({details}). Esportalo da Teachable Machine (progetto Immagine) come \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
+      "label_mismatch": "Il modello ha {outputs} uscite ma labels.txt elenca {labels} classi.",
+      "invalid_crop": "Ritaglio non valido: larghezza e altezza devono essere maggiori di 0 e il riquadro deve stare nell'immagine (x + larghezza ≤ 1, y + altezza ≤ 1).",
+      "path_not_allowed": "Usa un percorso assoluto in una cartella consentita (allowlist_external_dirs, /media è consentita di default)."
+    }
+  },
+  "selector": {
+    "update_mode": {
+      "options": {
+        "attribute": "Quando cambia l'attributo della telecamera",
+        "interval": "A intervallo fisso",
+        "manual": "Solo manualmente (pulsante o automazione)"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "classification": {
+        "name": "Stato",
+        "state": {
+          "uncertain": "Incerto"
+        }
+      },
+      "confidence": {
+        "name": "Sicurezza"
+      }
+    },
+    "binary_sensor": {
+      "occupied": {
+        "name": "Occupato"
+      },
+      "class_present": {
+        "name": "{class_name} presente",
+        "state": {
+          "on": "Presente",
+          "off": "Assente"
+        }
+      }
+    },
+    "button": {
+      "analyze": {
+        "name": "Analizza ora"
+      }
+    },
+    "event": {
+      "uncertain_result": {
+        "name": "Risultato incerto",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "uncertain": "Incerto"
+            }
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "export_crops": {
+      "name": "Esporta ritagli",
+      "description": "Ritaglia tutte le immagini di una cartella in un'altra cartella con lo stesso ritaglio di un classificatore, per preparare le foto di addestramento per Teachable Machine.",
+      "fields": {
+        "source": {
+          "name": "Cartella di origine",
+          "description": "Cartella con le foto originali, es. /media/parcheggio."
+        },
+        "destination": {
+          "name": "Cartella di destinazione",
+          "description": "Cartella dove scrivere le foto ritagliate (stessi nomi file)."
+        },
+        "config_entry_id": {
+          "name": "Classificatore",
+          "description": "Usa il ritaglio configurato per questo classificatore. I campi X/Y/larghezza/altezza lo sovrascrivono."
+        },
+        "x": {
+          "name": "X",
+          "description": "Bordo sinistro, come frazione della larghezza (0 = sinistra)."
+        },
+        "y": {
+          "name": "Y",
+          "description": "Bordo superiore, come frazione dell'altezza (0 = in alto)."
+        },
+        "width": {
+          "name": "Larghezza",
+          "description": "Larghezza come frazione della larghezza dell'immagine (1 = tutta)."
+        },
+        "height": {
+          "name": "Altezza",
+          "description": "Altezza come frazione dell'altezza dell'immagine (1 = tutta)."
+        },
+        "overwrite": {
+          "name": "Sovrascrivi",
+          "description": "Sovrascrive le foto già presenti nella cartella di destinazione."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "model_missing": {
+      "message": "I file del modello mancano ({path}). Carica di nuovo il modello dalle opzioni dell'integrazione o aggiungi di nuovo l'integrazione."
+    },
+    "model_invalid": {
+      "message": "Il modello salvato non può essere caricato ({error})."
+    },
+    "invalid_config_entry": {
+      "message": "{entry_id} non è una voce di Snapshot Classifier."
+    },
+    "invalid_crop": {
+      "message": "Ritaglio non valido: larghezza e altezza devono essere maggiori di 0 e il riquadro deve stare nell'immagine (x + larghezza ≤ 1, y + altezza ≤ 1)."
+    },
+    "path_not_allowed": {
+      "message": "{path} non è un percorso assoluto consentito (vedi allowlist_external_dirs; /media è consentita di default)."
+    },
+    "source_not_found": {
+      "message": "La cartella {path} non esiste."
+    },
+    "same_directory": {
+      "message": "Le cartelle di origine e destinazione devono essere diverse."
+    }
+  }
+}
