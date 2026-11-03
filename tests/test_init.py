@@ -311,7 +311,7 @@ async def test_export_crops_service(
     response = await hass.services.async_call(
         DOMAIN,
         "export_crops",
-        {"source": str(source), "destination": str(destination), "width": 0.25, "x": 0},
+        {"source": str(source), "destination": str(destination), "width": 0.25, "left": 0},
         blocking=True,
         return_response=True,
     )
@@ -329,7 +329,7 @@ async def test_export_crops_service(
         await hass.services.async_call(
             DOMAIN,
             "export_crops",
-            {"source": str(source), "destination": str(destination), "x": 0.9, "width": 0.5},
+            {"source": str(source), "destination": str(destination), "left": 0.9, "width": 0.5},
             blocking=True,
             return_response=True,
         )

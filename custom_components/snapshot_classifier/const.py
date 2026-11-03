@@ -55,5 +55,11 @@ ATTR_CONFIG_ENTRY_ID: Final = "config_entry_id"
 ATTR_SOURCE: Final = "source"
 ATTR_DESTINATION: Final = "destination"
 ATTR_OVERWRITE: Final = "overwrite"
+# Service crop fields. Not "x"/"y": YAML 1.1 parsers (e.g. the frontend
+# YAML editor) read a bare ``y`` key as the boolean ``true``.
+ATTR_LEFT: Final = "left"
+ATTR_TOP: Final = "top"
+ATTR_WIDTH: Final = "width"
+ATTR_HEIGHT: Final = "height"
 
 IMAGE_EXTENSIONS: Final = (".jpg", ".jpeg", ".png", ".webp", ".bmp")

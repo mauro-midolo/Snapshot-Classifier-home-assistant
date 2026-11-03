@@ -69,8 +69,8 @@
             "name": "Crop",
             "description": "Optional area of the image to analyze, in fractions of width/height (0-1), applied before the centre square crop. Use the same crop for the training pictures (service snapshot_classifier.export_crops).",
             "data": {
-              "x": "X",
-              "y": "Y",
+              "x": "Left (x)",
+              "y": "Top (y)",
               "width": "Width",
               "height": "Height"
             },
@@ -175,14 +175,14 @@
         },
         "config_entry_id": {
           "name": "Classifier",
-          "description": "Use the crop configured for this classifier. The X/Y/width/height fields override it."
+          "description": "Use the crop configured for this classifier. The left/top/width/height fields override it."
         },
-        "x": {
-          "name": "X",
+        "left": {
+          "name": "Left (x)",
           "description": "Left edge, as a fraction of the image width (0 = left)."
         },
-        "y": {
-          "name": "Y",
+        "top": {
+          "name": "Top (y)",
           "description": "Top edge, as a fraction of the image height (0 = top)."
         },
         "width": {

@@ -14,8 +14,12 @@ from .classifier import CropBox, export_crops
 from .const import (
     ATTR_CONFIG_ENTRY_ID,
     ATTR_DESTINATION,
+    ATTR_HEIGHT,
+    ATTR_LEFT,
     ATTR_OVERWRITE,
     ATTR_SOURCE,
+    ATTR_TOP,
+    ATTR_WIDTH,
     CONF_CROP,
     CONF_CROP_HEIGHT,
     CONF_CROP_WIDTH,
@@ -32,10 +36,10 @@ EXPORT_CROPS_SCHEMA = vol.Schema(
         vol.Required(ATTR_SOURCE): cv.string,
         vol.Required(ATTR_DESTINATION): cv.string,
         vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Optional(CONF_CROP_X): _FRACTION,
-        vol.Optional(CONF_CROP_Y): _FRACTION,
-        vol.Optional(CONF_CROP_WIDTH): _FRACTION,
-        vol.Optional(CONF_CROP_HEIGHT): _FRACTION,
+        vol.Optional(ATTR_LEFT): _FRACTION,
+        vol.Optional(ATTR_TOP): _FRACTION,
+        vol.Optional(ATTR_WIDTH): _FRACTION,
+        vol.Optional(ATTR_HEIGHT): _FRACTION,
         vol.Optional(ATTR_OVERWRITE, default=False): cv.boolean,
     }
 )
@@ -53,9 +57,15 @@ def _crop_from_call(hass: HomeAssistant, call: ServiceCall) -> CropBox:
                 translation_placeholders={"entry_id": entry_id},
             )
         base = dict(entry.options.get(CONF_CROP) or {})
-    for key in (CONF_CROP_X, CONF_CROP_Y, CONF_CROP_WIDTH, CONF_CROP_HEIGHT):
-        if key in call.data:
-            base[key] = call.data[key]
+    fields = {
+        ATTR_LEFT: CONF_CROP_X,
+        ATTR_TOP: CONF_CROP_Y,
+        ATTR_WIDTH: CONF_CROP_WIDTH,
+        ATTR_HEIGHT: CONF_CROP_HEIGHT,
+    }
+    for field, key in fields.items():
+        if field in call.data:
+            base[key] = call.data[field]
     crop = CropBox.from_mapping(base)
     if not crop.is_valid:
         raise ServiceValidationError(translation_domain=DOMAIN, translation_key="invalid_crop")
@@ -93,7 +103,12 @@ async def _async_export_crops(call: ServiceCall) -> ServiceResponse:
         "exported": result.exported,
         "skipped": result.skipped,
         "failed": result.failed,
-        "crop": crop.as_dict(),
+        "crop": {
+            ATTR_LEFT: crop.x,
+            ATTR_TOP: crop.y,
+            ATTR_WIDTH: crop.width,
+            ATTR_HEIGHT: crop.height,
+        },
     }
 
 
