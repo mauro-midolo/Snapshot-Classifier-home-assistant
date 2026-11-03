@@ -162,6 +162,7 @@ async def _setup_entry(hass: HomeAssistant, model_bytes: bytes) -> MockConfigEnt
 
 def _options_input(**overrides: object) -> dict:
     data = {
+        CONF_CAMERA: "camera.ingresso",
         CONF_THRESHOLD: 80,
         CONF_UPDATE_MODE: UPDATE_MODE_INTERVAL,
         CONF_WATCH_ATTRIBUTE: "timestamp",
@@ -257,3 +258,35 @@ async def test_options_flow_rejects_bad_model(
         )
     assert result["errors"] == {CONF_MODEL_FILE: "unsupported_quantized"}
     assert entry.runtime_data.labels == LABELS
+
+
+@pytest.mark.usefixtures("camera_image")
+async def test_options_flow_camera_and_watched_attribute(
+    hass: HomeAssistant, model_bytes: bytes
+) -> None:
+    """The camera can be changed; watching a missing attribute is refused."""
+    entry = await _setup_entry(hass, model_bytes)
+    hass.states.async_set("camera.live_view", "idle", {"video_url": "x"})
+    hass.states.async_set("camera.snapshot", "idle", {"timestamp": 5})
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        _options_input(
+            **{CONF_CAMERA: "camera.live_view", CONF_UPDATE_MODE: UPDATE_MODE_ATTRIBUTE}
+        ),
+    )
+    assert result["errors"] == {CONF_WATCH_ATTRIBUTE: "attribute_missing"}
+    assert result["description_placeholders"]["camera"] == "camera.live_view"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        _options_input(**{CONF_CAMERA: "camera.snapshot", CONF_UPDATE_MODE: UPDATE_MODE_ATTRIBUTE}),
+    )
+    await hass.async_block_till_done()
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_CAMERA] == "camera.snapshot"
+    assert entry.runtime_data.settings.camera_entity_id == "camera.snapshot"
+    # snapshot_time comes from the new camera's attribute
+    state = hass.states.get("sensor.parcheggio_status")
+    assert state.attributes["snapshot_time"] == "1970-01-01T00:00:05+00:00"

@@ -160,9 +160,10 @@ snapshot, altrimenti controlla ogni 60 secondi. Si cambia nelle opzioni.
 
 | Opzione | Predefinito | Descrizione |
 | --- | --- | --- |
+| Telecamera | scelta all'inizio | La telecamera da analizzare. Usa quella che ha scattato le foto di addestramento (es. la telecamera *Snapshot* di ring-mqtt, non *Live view*). |
 | Soglia di sicurezza | 70 % | Sotto questa probabilità lo *Stato* è `Incerto`. |
 | Quando analizzare | attributo se esiste `timestamp`, altrimenti intervallo | *Quando cambia l'attributo della telecamera*, *A intervallo fisso*, *Solo manualmente*. |
-| Attributo da osservare | `timestamp` | Attributo il cui cambiamento significa "nuovo snapshot". Non usare `entity_picture`/`access_token`: cambia ogni 5 minuti anche senza nuova immagine. |
+| Attributo da osservare | `timestamp` | Attributo il cui cambiamento significa "nuovo snapshot"; deve esistere sulla telecamera. Non usare `entity_picture`/`access_token`: cambia ogni 5 minuti anche senza nuova immagine. |
 | Intervallo | 60 s | Intervallo di controllo. Le immagini identiche non vengono rianalizzate. |
 | Classe "vuoto" / Classe da seguire | – | Vedi sopra. |
 | Ritaglio | immagine intera | Sinistra (x), alto (y), larghezza, altezza tra 0 e 1. |

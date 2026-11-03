@@ -45,6 +45,7 @@
         "title": "Snapshot classifier options",
         "description": "Model classes: {classes}.",
         "data": {
+          "camera_entity_id": "Camera",
           "threshold": "Confidence threshold",
           "update_mode": "When to analyze",
           "watch_attribute": "Camera attribute to watch",
@@ -55,6 +56,7 @@
           "model_file": "Replace the model (.zip)"
         },
         "data_description": {
+          "camera_entity_id": "The camera whose snapshot is analyzed. Use the camera that took the training pictures.",
           "threshold": "Under this probability the result is \"Uncertain\".",
           "update_mode": "Watching a camera attribute analyzes each new snapshot (e.g. the \"timestamp\" attribute of ring-mqtt cameras). Do not use entity_picture/access_token: it changes every few minutes even without a new image.",
           "watch_attribute": "Used with \"When the camera attribute changes\". Default: timestamp.",
@@ -106,7 +108,8 @@
       "unsupported_model": "The model is not supported ({details}). Export it from Teachable Machine (Image project) as \"Tensorflow Lite\" → \"Floating point\".",
       "label_mismatch": "The model has {outputs} outputs but labels.txt lists {labels} classes.",
       "invalid_crop": "Invalid crop: width and height must be greater than 0 and the box must be inside the image (x + width ≤ 1, y + height ≤ 1).",
-      "path_not_allowed": "Use an absolute path inside an allowed folder (allowlist_external_dirs, /media is allowed by default)."
+      "path_not_allowed": "Use an absolute path inside an allowed folder (allowlist_external_dirs, /media is allowed by default).",
+      "attribute_missing": "{camera} has no \"{attribute}\" attribute, so it would never trigger an analysis. Choose another attribute or camera, or use \"At a fixed interval\"."
     }
   },
   "selector": {
