@@ -162,9 +162,10 @@ otherwise it polls every 60 seconds. Change it in the options.
 
 | Option | Default | Description |
 | --- | --- | --- |
+| Camera | chosen at setup | The camera to analyze. Use the one that took the training pictures (e.g. the ring-mqtt *Snapshot* camera, not *Live view*). |
 | Confidence threshold | 70 % | Under this probability *Status* is `Uncertain`. |
 | When to analyze | camera attribute if `timestamp` exists, else interval | *When the camera attribute changes*, *At a fixed interval*, *Only manually*. |
-| Camera attribute to watch | `timestamp` | Attribute whose change means "new snapshot". Don't use `entity_picture`/`access_token`: it changes every 5 minutes even without a new image. |
+| Camera attribute to watch | `timestamp` | Attribute whose change means "new snapshot"; it must exist on the camera. Don't use `entity_picture`/`access_token`: it changes every 5 minutes even without a new image. |
 | Interval | 60 s | Polling interval. Identical images are not analyzed twice. |
 | Class meaning "empty" / Class to track | – | See above. |
 | Crop | whole image | Left (x), top (y), width, height in 0–1. |

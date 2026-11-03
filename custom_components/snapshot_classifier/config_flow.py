@@ -15,7 +15,7 @@ from homeassistant.config_entries import (
     ConfigFlowResult,
     OptionsFlow,
 )
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import section
 from homeassistant.helpers.selector import (
@@ -225,6 +225,10 @@ class SnapshotClassifierOptionsFlow(OptionsFlow):
         self._new_classifier: Classifier | None = None
 
     @property
+    def _camera(self) -> str:
+        return self.config_entry.options.get(CONF_CAMERA) or self.config_entry.data[CONF_CAMERA]
+
+    @property
     def _directory(self) -> Path:
         return model_directory(self.hass, self.config_entry.data[CONF_STORAGE_ID])
 
@@ -252,6 +256,17 @@ class SnapshotClassifierOptionsFlow(OptionsFlow):
                 and self.hass.config.is_allowed_path(uncertain_dir)
             ):
                 errors[CONF_UNCERTAIN_DIR] = "path_not_allowed"
+            camera = user_input.get(CONF_CAMERA) or self._camera
+            attribute = (user_input.get(CONF_WATCH_ATTRIBUTE) or DEFAULT_WATCH_ATTRIBUTE).strip()
+            if user_input[CONF_UPDATE_MODE] == UPDATE_MODE_ATTRIBUTE and (
+                (state := self.hass.states.get(camera)) is not None
+                and state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN)
+                and attribute not in state.attributes
+            ):
+                # Watching an attribute the camera does not have means the
+                # classifier would never run on its own.
+                errors[CONF_WATCH_ATTRIBUTE] = "attribute_missing"
+                placeholders.update({"camera": camera, "attribute": attribute})
             if not errors and (file_id := user_input.get(CONF_MODEL_FILE)):
                 self._new_classifier, errors, placeholders = await _async_read_upload(
                     self.hass, file_id
@@ -259,11 +274,10 @@ class SnapshotClassifierOptionsFlow(OptionsFlow):
             if not errors:
                 self._options = {
                     **self.config_entry.options,
+                    CONF_CAMERA: camera,
                     CONF_THRESHOLD: float(user_input[CONF_THRESHOLD]),
                     CONF_UPDATE_MODE: user_input[CONF_UPDATE_MODE],
-                    CONF_WATCH_ATTRIBUTE: (
-                        user_input.get(CONF_WATCH_ATTRIBUTE) or DEFAULT_WATCH_ATTRIBUTE
-                    ).strip(),
+                    CONF_WATCH_ATTRIBUTE: attribute,
                     CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]),
                     CONF_CROP: crop.as_dict(),
                     CONF_UNCERTAIN_DIR: uncertain_dir,
@@ -288,6 +302,7 @@ class SnapshotClassifierOptionsFlow(OptionsFlow):
         )
         schema = vol.Schema(
             {
+                vol.Required(CONF_CAMERA): EntitySelector(EntitySelectorConfig(domain="camera")),
                 vol.Required(CONF_THRESHOLD): NumberSelector(
                     NumberSelectorConfig(
                         min=1,
@@ -332,6 +347,7 @@ class SnapshotClassifierOptionsFlow(OptionsFlow):
             }
         )
         suggested = {
+            CONF_CAMERA: self._camera,
             CONF_THRESHOLD: options.get(CONF_THRESHOLD, DEFAULT_THRESHOLD),
             CONF_UPDATE_MODE: options.get(CONF_UPDATE_MODE, UPDATE_MODE_ATTRIBUTE),
             CONF_WATCH_ATTRIBUTE: options.get(CONF_WATCH_ATTRIBUTE, DEFAULT_WATCH_ATTRIBUTE),
@@ -352,6 +368,8 @@ class SnapshotClassifierOptionsFlow(OptionsFlow):
                 "details": "",
                 "outputs": "",
                 "labels": "",
+                "camera": "",
+                "attribute": "",
                 **placeholders,
             },
         )

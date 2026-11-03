@@ -64,6 +64,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: SnapshotClassifierConfig
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
     if settings.update_mode == UPDATE_MODE_ATTRIBUTE:
+        camera_state = hass.states.get(settings.camera_entity_id)
+        if camera_state is not None and settings.watch_attribute not in camera_state.attributes:
+            _LOGGER.warning(
+                "%s: %s has no attribute '%s'; the snapshot will only be analyzed "
+                "when the camera reports it. Check the camera and the "
+                "'When to analyze' option",
+                entry.title,
+                settings.camera_entity_id,
+                settings.watch_attribute,
+            )
 
         @callback
         def _camera_changed(event: Event[EventStateChangedData]) -> None:

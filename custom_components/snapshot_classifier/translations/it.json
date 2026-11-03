@@ -45,6 +45,7 @@
         "title": "Opzioni del classificatore",
         "description": "Classi del modello: {classes}.",
         "data": {
+          "camera_entity_id": "Telecamera",
           "threshold": "Soglia di sicurezza",
           "update_mode": "Quando analizzare",
           "watch_attribute": "Attributo della telecamera da osservare",
@@ -55,6 +56,7 @@
           "model_file": "Sostituisci il modello (.zip)"
         },
         "data_description": {
+          "camera_entity_id": "La telecamera di cui analizzare lo snapshot. Usa quella che ha scattato le foto di addestramento.",
           "threshold": "Sotto questa probabilità il risultato è \"Incerto\".",
           "update_mode": "Osservare un attributo della telecamera analizza ogni nuovo snapshot (es. l'attributo \"timestamp\" delle telecamere ring-mqtt). Non usare entity_picture/access_token: cambia ogni pochi minuti anche senza una nuova immagine.",
           "watch_attribute": "Usato con \"Quando cambia l'attributo della telecamera\". Predefinito: timestamp.",
@@ -106,7 +108,8 @@
       "unsupported_model": "Modello non supportato ({details}). Esportalo da Teachable Machine (progetto Immagine) come \"Tensorflow Lite\" → \"Floating point\" (virgola mobile).",
       "label_mismatch": "Il modello ha {outputs} uscite ma labels.txt elenca {labels} classi.",
       "invalid_crop": "Ritaglio non valido: larghezza e altezza devono essere maggiori di 0 e il riquadro deve stare nell'immagine (x + larghezza ≤ 1, y + altezza ≤ 1).",
-      "path_not_allowed": "Usa un percorso assoluto in una cartella consentita (allowlist_external_dirs, /media è consentita di default)."
+      "path_not_allowed": "Usa un percorso assoluto in una cartella consentita (allowlist_external_dirs, /media è consentita di default).",
+      "attribute_missing": "{camera} non ha l'attributo \"{attribute}\", quindi non farebbe mai partire l'analisi. Scegli un altro attributo o telecamera, oppure usa \"A intervallo fisso\"."
     }
   },
   "selector": {

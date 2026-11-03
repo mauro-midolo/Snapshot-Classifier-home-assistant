@@ -62,7 +62,7 @@ class Settings:
         """Read the settings of a config entry."""
         options = entry.options
         return cls(
-            camera_entity_id=entry.data[CONF_CAMERA],
+            camera_entity_id=options.get(CONF_CAMERA) or entry.data[CONF_CAMERA],
             threshold=float(options.get(CONF_THRESHOLD, DEFAULT_THRESHOLD)),
             update_mode=options.get(CONF_UPDATE_MODE, UPDATE_MODE_ATTRIBUTE),
             watch_attribute=options.get(CONF_WATCH_ATTRIBUTE) or DEFAULT_WATCH_ATTRIBUTE,
