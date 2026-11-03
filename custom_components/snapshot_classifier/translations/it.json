@@ -69,8 +69,8 @@
             "name": "Ritaglio",
             "description": "Area facoltativa dell'immagine da analizzare, in frazioni di larghezza/altezza (0-1), applicata prima del quadrato centrale. Usa lo stesso ritaglio per le foto di addestramento (servizio snapshot_classifier.export_crops).",
             "data": {
-              "x": "X",
-              "y": "Y",
+              "x": "Sinistra (x)",
+              "y": "Alto (y)",
               "width": "Larghezza",
               "height": "Altezza"
             },
@@ -175,14 +175,14 @@
         },
         "config_entry_id": {
           "name": "Classificatore",
-          "description": "Usa il ritaglio configurato per questo classificatore. I campi X/Y/larghezza/altezza lo sovrascrivono."
+          "description": "Usa il ritaglio configurato per questo classificatore. I campi sinistra/alto/larghezza/altezza lo sovrascrivono."
         },
-        "x": {
-          "name": "X",
+        "left": {
+          "name": "Sinistra (x)",
           "description": "Bordo sinistro, come frazione della larghezza (0 = sinistra)."
         },
-        "y": {
-          "name": "Y",
+        "top": {
+          "name": "Alto (y)",
           "description": "Bordo superiore, come frazione dell'altezza (0 = in alto)."
         },
         "width": {

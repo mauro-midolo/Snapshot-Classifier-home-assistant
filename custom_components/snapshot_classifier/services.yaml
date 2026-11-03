@@ -14,14 +14,14 @@ export_crops:
       selector:
         config_entry:
           integration: snapshot_classifier
-    x:
+    left:
       selector:
         number:
           min: 0
           max: 1
           step: 0.001
           mode: box
-    y:
+    top:
       selector:
         number:
           min: 0

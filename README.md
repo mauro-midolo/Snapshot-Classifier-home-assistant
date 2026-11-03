@@ -88,10 +88,10 @@ them into one folder per class, e.g. `my_car/`, `other_car/`, `empty/`.
 If the camera sees much more than what matters (e.g. the parking spot is only the
 bottom-left part of the frame), use a crop: it improves accuracy a lot.
 
-- The crop is a box in fractions of the image: `x`, `y` (top-left corner),
-  `width`, `height`, all between 0 and 1. Example: the bottom-left quarter is
-  `x: 0, y: 0.5, width: 0.5, height: 0.5`. Measure it on a snapshot with any image
-  viewer: `x = left_pixel / image_width`, etc.
+- The crop is a box in fractions of the image: left (`x`), top (`y`), `width`,
+  `height`, all between 0 and 1. Example: the bottom-left quarter is left 0,
+  top 0.5, width 0.5, height 0.5. Measure it on a snapshot with any image viewer:
+  `left = left_pixel / image_width`, etc.
 - The crop is applied **before** the centre square crop and the resize to 224×224
   that Teachable Machine does. So the box can be any rectangle, but what you want
   to see should be in its centre square.
@@ -103,14 +103,15 @@ action: snapshot_classifier.export_crops
 data:
   source: /media/parking
   destination: /media/parking_crops
-  x: 0
-  y: 0.5
+  left: 0
+  top: 0.5
   width: 0.5
   height: 0.5
 ```
 
-Once the classifier exists you can use `config_entry_id` instead of the numbers to
-reuse its crop. The service returns how many pictures it exported, skipped
+The service fields are called `left`/`top` (not `x`/`y`: some YAML editors read a
+bare `y:` as `true`). Once the classifier exists you can use `config_entry_id`
+instead of the numbers to reuse its crop. The service returns how many pictures it exported, skipped
 (already present, unless `overwrite: true`) and failed.
 
 ## 2. Train the model on Teachable Machine
@@ -166,7 +167,7 @@ otherwise it polls every 60 seconds. Change it in the options.
 | Camera attribute to watch | `timestamp` | Attribute whose change means "new snapshot". Don't use `entity_picture`/`access_token`: it changes every 5 minutes even without a new image. |
 | Interval | 60 s | Polling interval. Identical images are not analyzed twice. |
 | Class meaning "empty" / Class to track | – | See above. |
-| Crop | whole image | `x`, `y`, `width`, `height` in 0–1. |
+| Crop | whole image | Left (x), top (y), width, height in 0–1. |
 | Folder for uncertain snapshots | – | e.g. `/media/snapshot_classifier/uncertain`. Must be an allowed folder (`/media` is allowed by default, others go in [`allowlist_external_dirs`](https://www.home-assistant.io/integrations/homeassistant/#allowlist_external_dirs)). |
 | Replace the model | – | Upload a retrained `.zip`. If the classes changed you are asked to choose them again. |
 

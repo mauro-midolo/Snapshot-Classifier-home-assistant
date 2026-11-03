@@ -85,10 +85,10 @@ dividile in una cartella per classe, es. `mia_auto/`, `altre/`, `vuoto/`.
 Se la telecamera inquadra molto più del necessario (es. il posto auto è solo la
 parte in basso a sinistra), usa un ritaglio: migliora molto la precisione.
 
-- Il ritaglio è un riquadro in frazioni dell'immagine: `x`, `y` (angolo in alto a
-  sinistra), `width` (larghezza), `height` (altezza), tutti tra 0 e 1. Esempio: il
-  quarto in basso a sinistra è `x: 0, y: 0.5, width: 0.5, height: 0.5`. Misuralo su
-  uno snapshot con un visualizzatore di immagini: `x = pixel_sinistro / larghezza_immagine`, ecc.
+- Il ritaglio è un riquadro in frazioni dell'immagine: sinistra (`x`), alto (`y`),
+  larghezza (`width`), altezza (`height`), tutti tra 0 e 1. Esempio: il quarto in
+  basso a sinistra è sinistra 0, alto 0.5, larghezza 0.5, altezza 0.5. Misuralo su
+  uno snapshot con un visualizzatore di immagini: `sinistra = pixel_sinistro / larghezza_immagine`, ecc.
 - Il ritaglio è applicato **prima** del quadrato centrale e del ridimensionamento a
   224×224 che fa Teachable Machine. Il riquadro può essere un rettangolo qualsiasi,
   ma ciò che interessa deve stare nel suo quadrato centrale.
@@ -100,14 +100,15 @@ action: snapshot_classifier.export_crops
 data:
   source: /media/parcheggio
   destination: /media/parcheggio_ritagli
-  x: 0
-  y: 0.5
+  left: 0
+  top: 0.5
   width: 0.5
   height: 0.5
 ```
 
-Quando il classificatore esiste puoi usare `config_entry_id` al posto dei numeri
-per riusare il suo ritaglio. Il servizio restituisce quante foto ha esportato,
+Nel servizio i campi si chiamano `left`/`top` (non `x`/`y`: alcuni editor YAML
+leggono `y:` come `true`). Quando il classificatore esiste puoi usare
+`config_entry_id` al posto dei numeri per riusare il suo ritaglio. Il servizio restituisce quante foto ha esportato,
 saltato (già presenti, a meno di `overwrite: true`) e non riuscito a leggere.
 
 ## 2. Addestra il modello su Teachable Machine
@@ -164,7 +165,7 @@ snapshot, altrimenti controlla ogni 60 secondi. Si cambia nelle opzioni.
 | Attributo da osservare | `timestamp` | Attributo il cui cambiamento significa "nuovo snapshot". Non usare `entity_picture`/`access_token`: cambia ogni 5 minuti anche senza nuova immagine. |
 | Intervallo | 60 s | Intervallo di controllo. Le immagini identiche non vengono rianalizzate. |
 | Classe "vuoto" / Classe da seguire | – | Vedi sopra. |
-| Ritaglio | immagine intera | `x`, `y`, `width`, `height` tra 0 e 1. |
+| Ritaglio | immagine intera | Sinistra (x), alto (y), larghezza, altezza tra 0 e 1. |
 | Cartella per gli snapshot incerti | – | es. `/media/snapshot_classifier/incerti`. Deve essere una cartella consentita (`/media` lo è di default, le altre vanno in [`allowlist_external_dirs`](https://www.home-assistant.io/integrations/homeassistant/#allowlist_external_dirs)). |
 | Sostituisci il modello | – | Carica uno `.zip` riaddestrato. Se le classi sono cambiate ti chiede di sceglierle di nuovo. |
 
