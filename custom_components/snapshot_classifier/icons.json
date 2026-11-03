@@ -1,0 +1,38 @@
+{
+  "entity": {
+    "sensor": {
+      "classification": {
+        "default": "mdi:image-search",
+        "state": {
+          "uncertain": "mdi:help-circle-outline"
+        }
+      },
+      "confidence": {
+        "default": "mdi:gauge"
+      }
+    },
+    "binary_sensor": {
+      "class_present": {
+        "default": "mdi:checkbox-blank-circle-outline",
+        "state": {
+          "on": "mdi:check-circle"
+        }
+      }
+    },
+    "button": {
+      "analyze": {
+        "default": "mdi:camera-iris"
+      }
+    },
+    "event": {
+      "uncertain_result": {
+        "default": "mdi:image-off-outline"
+      }
+    }
+  },
+  "services": {
+    "export_crops": {
+      "service": "mdi:crop"
+    }
+  }
+}

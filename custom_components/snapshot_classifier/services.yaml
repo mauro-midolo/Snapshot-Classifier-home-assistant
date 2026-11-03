@@ -1,0 +1,48 @@
+export_crops:
+  fields:
+    source:
+      required: true
+      example: /media/parcheggio
+      selector:
+        text:
+    destination:
+      required: true
+      example: /media/parcheggio_crops
+      selector:
+        text:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: snapshot_classifier
+    x:
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.001
+          mode: box
+    y:
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.001
+          mode: box
+    width:
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.001
+          mode: box
+    height:
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.001
+          mode: box
+    overwrite:
+      default: false
+      selector:
+        boolean:
