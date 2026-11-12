@@ -9,5 +9,5 @@
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/mauro-midolo/snapshot-classifier-home-assistant/issues",
   "requirements": ["tflite==2.18.0"],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

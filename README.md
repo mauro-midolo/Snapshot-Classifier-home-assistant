@@ -169,7 +169,7 @@ otherwise it polls every 60 seconds. Change it in the options.
 | Interval | 60 s | Polling interval. Identical images are not analyzed twice. |
 | Class meaning "empty" / Class to track | – | See above. |
 | Crop | whole image | Left (x), top (y), width, height in 0–1. |
-| Folder for uncertain snapshots | – | e.g. `/media/snapshot_classifier/uncertain`. Must be an allowed folder (`/media` is allowed by default, others go in [`allowlist_external_dirs`](https://www.home-assistant.io/integrations/homeassistant/#allowlist_external_dirs)). |
+| Folder for uncertain snapshots | – | e.g. `/media/snapshot_classifier/uncertain`. Must be an allowed folder (`/media` is allowed by default, others go in [`allowlist_external_dirs`](https://www.home-assistant.io/integrations/homeassistant/#allowlist_external_dirs)). Files are named after the most likely class and its percentage, e.g. `parking_20261112_101500_my_car_45.jpg`. |
 | Replace the model | – | Upload a retrained `.zip`. If the classes changed you are asked to choose them again. |
 
 ## Entities

@@ -206,7 +206,7 @@ class SnapshotClassifierCoordinator(DataUpdateCoordinator[ClassificationResult |
             saved_image = None
             if uncertain and self.settings.uncertain_dir:
                 saved_image = await self._async_save_uncertain(
-                    image.content, image.content_type, now
+                    image.content, image.content_type, now, best_class, confidence
                 )
 
             _LOGGER.debug(
@@ -229,9 +229,18 @@ class SnapshotClassifierCoordinator(DataUpdateCoordinator[ClassificationResult |
             )
 
     async def _async_save_uncertain(
-        self, content: bytes, content_type: str, now: datetime
+        self,
+        content: bytes,
+        content_type: str,
+        now: datetime,
+        best_class: str,
+        confidence: float,
     ) -> str | None:
-        """Store an uncertain snapshot so it can be added to the training set."""
+        """Store an uncertain snapshot so it can be added to the training set.
+
+        The file name holds the most likely class and its percentage, e.g.
+        ``parking_20250101_120000_mine_40.jpg``.
+        """
         directory = Path(self.settings.uncertain_dir or "")
         if not self.hass.config.is_allowed_path(str(directory)):
             _LOGGER.warning(
@@ -242,7 +251,15 @@ class SnapshotClassifierCoordinator(DataUpdateCoordinator[ClassificationResult |
             return None
         extension = {"image/png": "png", "image/webp": "webp"}.get(content_type, "jpg")
         local = dt_util.as_local(now)
-        path = directory / (f"{slugify(self.config_entry.title)}_{local:%Y%m%d_%H%M%S}.{extension}")
+        name = "_".join(
+            (
+                slugify(self.config_entry.title),
+                f"{local:%Y%m%d_%H%M%S}",
+                slugify(best_class) or "class",
+                str(round(confidence * 100)),
+            )
+        )
+        path = directory / f"{name}.{extension}"
 
         def _write() -> None:
             directory.mkdir(parents=True, exist_ok=True)

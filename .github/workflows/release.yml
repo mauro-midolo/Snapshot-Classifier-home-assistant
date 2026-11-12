@@ -1,0 +1,33 @@
+name: Release
+
+# Publishes a GitHub release (used by HACS) whenever the version in
+# manifest.json reaches main and has no release yet.
+on:
+  push:
+    branches: [main]
+    paths:
+      - custom_components/snapshot_classifier/manifest.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the release for the manifest version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(jq -r .version custom_components/snapshot_classifier/manifest.json)
+          if gh release view "$version" >/dev/null 2>&1; then
+            echo "Release $version already exists"
+            exit 0
+          fi
+          gh release create "$version" \
+            --target "$GITHUB_SHA" \
+            --title "$version" \
+            --generate-notes
