@@ -165,6 +165,8 @@ async def test_uncertain_event_and_saved_snapshot(
     assert event.attributes["confidence"] == 40.0
     saved = Path(event.attributes["image_path"])
     assert saved.parent == folder
+    assert saved.name.startswith("parcheggio_")
+    assert saved.stem.endswith("_mine_40")
     assert saved.read_bytes() == camera_image[-1]
     # Occupancy still works from the raw probabilities
     assert hass.states.get(OCCUPIED).state == STATE_ON
