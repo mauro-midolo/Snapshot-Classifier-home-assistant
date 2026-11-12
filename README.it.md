@@ -167,7 +167,7 @@ snapshot, altrimenti controlla ogni 60 secondi. Si cambia nelle opzioni.
 | Intervallo | 60 s | Intervallo di controllo. Le immagini identiche non vengono rianalizzate. |
 | Classe "vuoto" / Classe da seguire | – | Vedi sopra. |
 | Ritaglio | immagine intera | Sinistra (x), alto (y), larghezza, altezza tra 0 e 1. |
-| Cartella per gli snapshot incerti | – | es. `/media/snapshot_classifier/incerti`. Deve essere una cartella consentita (`/media` lo è di default, le altre vanno in [`allowlist_external_dirs`](https://www.home-assistant.io/integrations/homeassistant/#allowlist_external_dirs)). |
+| Cartella per gli snapshot incerti | – | es. `/media/snapshot_classifier/incerti`. Deve essere una cartella consentita (`/media` lo è di default, le altre vanno in [`allowlist_external_dirs`](https://www.home-assistant.io/integrations/homeassistant/#allowlist_external_dirs)). Il nome del file contiene la classe più probabile e la sua percentuale, es. `parcheggio_20261112_101500_jeep_45.jpg`. |
 | Sostituisci il modello | – | Carica uno `.zip` riaddestrato. Se le classi sono cambiate ti chiede di sceglierle di nuovo. |
 
 ## Entità
